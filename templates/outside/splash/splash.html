@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}CuteGarden{% endblock %}
+
+{% block head %}
+    {% include "outside/splash/splash-head.html" %}
+{% endblock %}
+
+{% block scripts %}{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bin/route/splash.css') }}">
+{% endblock %}
+
+{% block header %}
+    {% include "outside/splash/splash-header.html" %}
+{% endblock %}
+
+{% block body %}
+    {% include "outside/splash/splash-body.html" %}
+{% endblock %}
+
+{% block footer %}
+    {% include "outside/splash/splash-footer.html" %}
+{% endblock %}

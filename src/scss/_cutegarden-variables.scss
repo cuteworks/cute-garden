@@ -1,0 +1,23 @@
+/***********************************************************************************************************************
+ * Here we define any variables we use across CuteGarden. They're defined here in order to be accessible to all the
+ * SCSS files we build with the project. They are read in cutegarden.scss and used there to override the default
+ * framework styles.
+ * ********************************************************************************************************************/
+
+@import "cuteworks-variables";
+
+//$cutegarden-block-font: 'Bungee', sans-serif;
+$cutegarden-sans-serif-font: 'Yantramanav', sans-serif;
+$cutegarden-serif-font: 'Roboto Slab', serif;
+
+$cutegarden-black: #220901;
+$cutegarden-dark: #361f18;
+$cutegarden-light: #dad6d5;
+$cutegarden-white: #eceaea;
+
+$cutegarden-primary: #bc3908;
+
+$cutegarden-secondary: #621708;
+
+$cutegarden-primary-accent: #ffbb1e;
+$cutegarden-secondary-accent: #941b0c;

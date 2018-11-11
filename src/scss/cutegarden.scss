@@ -1,0 +1,57 @@
+/***********************************************************************************************************************
+ * Styles specific to cutegarden.
+ **********************************************************************************************************************/
+
+
+@import "cutegarden-variables";
+
+//#region Page-level styles
+
+html {
+  background-color: $cutegarden-black; /* For pages that aren't long enough, don't have a bright white background. */
+}
+
+/* The Bulma $link variable is used for form highlight, which we want to be the primary accent color. But for actual
+ * links, it's too hard to read. */
+a {
+  color: $cutegarden-primary;
+}
+
+//#endregion
+
+
+/* Main title should use a fancy font. */
+.hero .title {
+  font-family: $cuteworks-font-brand;
+}
+
+
+
+body, section.section {
+  background-color: $cutegarden-light;
+}
+
+/* Default text content (other than headers) should use the serif font. */
+.content {
+  font-family: $cutegarden-serif-font;
+}
+
+/* Color should be white in the footer and titles should be smaller. */
+.footer {
+  color: $cutegarden-light;
+  font-size: 0.9rem;
+
+  .title, .subtitle {
+    color: $cutegarden-light; /* Need the color set here too, .title has a color property. */
+    font-size: 1.25rem;
+  }
+
+  a {
+    color: $cutegarden-primary-accent; /* The accent color is ok in the footer for links. */
+
+    /* Reset size for the icons in the footer, they don't look right at 0.9rem. */
+    .icon {
+      font-size: 1rem;
+    }
+  }
+}
