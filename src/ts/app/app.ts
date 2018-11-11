@@ -10,16 +10,31 @@ class app {
     private cw: number;
     private ch: number;
 
+    private fps: number;            // Frames-per-second
+    private framesDrawn: number;    // How many frames have been drawn in the last second
+
+    private config: AppConfig;
+
     constructor() {
         this.init();
+        this.animate();
     }
 
     //#region Initialization
 
     private init(): void {
+        this.initVars();
         this.initElements();
         this.initListeners();
         this.initCanvas();
+        this.initTimers();
+    }
+
+    private initVars(): void {
+        this.fps = 0;
+        this.framesDrawn = 0;
+
+        this.config = new AppConfig();
     }
 
     private initElements(): void {
@@ -36,6 +51,11 @@ class app {
         this.canvasResizeToContainer();
     }
 
+    private initTimers(): void {
+        window.setInterval(this.updateFPS, 1000);
+    }
+
+
     //#endregion
 
     //#region Event handlers
@@ -50,7 +70,39 @@ class app {
 
     //#endregion
 
+    //#region Timers
+
+    private updateFPS(): void {
+        this.fps = this.framesDrawn;
+        this.framesDrawn = 0;
+    }
+
+    //#endregion
+
     //#region Rendering
+
+    /**
+     * @summary Kick off the canvas's rendering - the canvas will automatically be re-rendered.
+     */
+    private animate(): void {
+        window.requestAnimationFrame((timestamp: DOMHighResTimeStamp) => {
+            this.animate_impl(timestamp);
+        });
+    }
+
+    /**
+     * @summary Automatically call canvasRedraw when the next animation frame is ready.
+     */
+    private animate_impl(timestamp: DOMHighResTimeStamp): void {
+       // console.log("" + timestamp);
+        if (timestamp < timestamp) {
+            return;
+        }
+        window.requestAnimationFrame((timestamp: DOMHighResTimeStamp) => {
+            this.animate_impl(timestamp);
+        });
+        this.canvasRedraw();
+    }
 
     /**
      * @summary Resize the canvas to fill its containing element.
@@ -67,12 +119,36 @@ class app {
      * @summary Repaint the canvas.
      */
     public canvasRedraw(): void {
-        this.ctx.clearRect(0, 0, 3,3)
+        this.ctx.clearRect(0, 0, this.cw, this.ch);
+
+
+        if (this.config.showFPS) {
+            this.ctx.fillStyle = "#00EE00";
+            this.ctx.font = AppConstants.FONT_SANS_SERIF;
+            this.ctx.fillText("FPS: " + this.fps, 16, 16);
+        }
+
+        this.framesDrawn++;
     }
+
 
     //#endregion
 }
 
-alert("!!!");
+class AppConfig {
+    public showFPS: boolean;
+
+    constructor() {
+        this.showFPS = true;
+    }
+
+}
+
+class AppConstants {
+    public static FONT_BRAND = "Pacifico";
+    public static FONT_SANS_SERIF = "Yantramanav";
+    public static FONT_SERIF = "Roboto Slab";
+
+}
+
 new app();
-alert("HEY");
