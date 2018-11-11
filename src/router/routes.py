@@ -5,6 +5,7 @@
 from flask import Flask
 
 from . import init_routes
+from . import app
 from . import authentication
 
 
@@ -15,4 +16,5 @@ def init_all_routes(flask_app: Flask) -> None:
     :param flask_app: The Flask application.
     """
     init_routes(flask_app)
+    app.init_routes(flask_app)
     authentication.init_routes(flask_app)
