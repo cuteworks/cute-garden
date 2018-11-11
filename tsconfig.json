@@ -11,6 +11,6 @@
     "outDir": "static/js/bin"
   },
   "include": [
-    "src/ts/**/*"
+    "src/ts/"
   ]
 }

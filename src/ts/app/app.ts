@@ -5,6 +5,6 @@
 class app
 {
     constructor() {
-        alert("hello world");
+
     }
 }
