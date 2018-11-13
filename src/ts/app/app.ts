@@ -108,7 +108,7 @@ class app {
 
 
     private initCamera(): void {
-        this._cam = new Camera(-this.cw / 2, -this.ch / 2, this.cw, this.ch);
+        this._cam = new Camera(-this.cw / 2, -this.ch / 2, this.cw, this.ch, AppConstants.CAMERA_ANGLE_TO_GROUND);
     }
 
     private initTimers(): void {
@@ -302,13 +302,35 @@ class AppConfig {
 }
 
 class AppConstants {
+    public static TILE_RADIUS = 32;
+    public static CAMERA_ANGLE_TO_GROUND = 45;
+
     public static FONT_BRAND = "Pacifico";
     public static FONT_SANS_SERIF = "Yantramanav";
     public static FONT_SERIF = "Roboto Slab";
 
+    public static COLOR_BACKGROUND = "#141316";
+
     public static COLOR_CUTE_WHITE = "#e4e3e5";
     public static COLOR_CUTE_LIGHT = "#afacb3";
     public static COLOR_CUTE_GRAY = "#6d6875";
+
+
+    //public static COLOR_CUTE_RED = "#bc3908";
+    //public static COLOR_CUTE_RED_LIGHT = "#941b0c";
+    //public static COLOR_CUTE_RED_DARK = "#621708";
+
+    public static COLOR_CUTE_ORANGE = "#fe7f2d";
+    public static COLOR_CUTE_ORANGE_BORDER = "#e2711d";
+    public static COLOR_CUTE_ORANGE_HOVER = "#492509";
+
+    public static COLOR_CUTE_YELLOW = "#FFD23F";
+    public static COLOR_CUTE_YELLOW_BORDER = "#ffc005";
+    public static COLOR_CUTE_YELLOW_HOVER = "#544404";
+
+    public static COLOR_CUTE_GREEN = "#e0f404";
+    public static COLOR_CUTE_GREEN_BORDER = "#d8e804";
+    public static COLOR_CUTE_GREEN_HOVER = "#50540c";
 }
 
 class Renderer {
@@ -450,7 +472,7 @@ class Camera {
         this._angleToGround = _;
     }
 
-    constructor(offsetX: number = 0, offsetY: number = 0, width: number = 0, height: number = 0, angleToGround: number = 45) {
+    constructor(offsetX: number = 0, offsetY: number = 0, width: number = 0, height: number = 0, angleToGround: number = 90) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.width = width;
@@ -495,12 +517,11 @@ class Camera {
 
 class HexTile {
 
-    private readonly TILE_RADIUS = 24;
-
     private _posX: number;
     private _poxY: number;
 
     private _colorScheme: HexTileColorScheme;
+    private _isBottomTile: boolean;
 
     //#region Getters / setters
 
@@ -528,6 +549,15 @@ class HexTile {
         this._colorScheme = _;
     }
 
+    get isBottomTile(): boolean {
+        return this._isBottomTile;
+    }
+
+    set isBottomTile(_: boolean) {
+        this._isBottomTile = _;
+    }
+
+
     constructor(x: number = 0,
                 y: number = 0,
                 colorScheme: HexTileColorScheme = new HexTileColorScheme(
@@ -540,11 +570,19 @@ class HexTile {
         this.colorScheme = colorScheme;
     }
 
-    public render(cam: Camera, ctx: CanvasRenderingContext2D): void {
+    /**
+     * @summary          Render this tile to the canvas.
+     * @param cam        The camera.
+     * @param ctx        The rendering context.
+     * @param drawBorder Whether to draw the projection's bottom border (i.e. this tile is "in front" of all others).
+     */
+    public render(cam: Camera, ctx: CanvasRenderingContext2D, drawBorder: boolean = false): void {
         if (!this.isVisible(cam)) {
             return;
         }
 
+        ctx.lineWidth = 2;
+        ctx.lineJoin = "round";
         ctx.strokeStyle = this.colorScheme.color;
         ctx.beginPath();
 
@@ -556,29 +594,43 @@ class HexTile {
         ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6));
 
         ctx.closePath();
-        ctx.stroke();
+
 
         if (ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY)) {
             ctx.fillStyle = this.colorScheme.colorHover;
             ctx.fill();
-            console.log("It's in!");
+        } else {
+            // Bottom tiles that are not hovered need to clear their inside to the background color, or else the bottom
+            // border from other bottom tiles will be visible through the top face of this tile. Do this fill for all
+            // tiles since the stroke-width will look uneven otherwise.
+            ctx.fillStyle = AppConstants.COLOR_BACKGROUND;
+            ctx.fill();
         }
 
-        ctx.fillStyle = this.colorScheme.colorDark;
-        ctx.beginPath();
+        ctx.stroke();
 
-        ctx.moveTo(this.calcPointX(cam, 1), this.calcPointY(cam, 1))
-        ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6));
-        ctx.lineTo(this.calcPointX(cam, 5), this.calcPointY(cam, 5));
-        ctx.lineTo(this.calcPointX(cam, 4), this.calcPointY(cam, 4));
 
-        ctx.lineTo(this.calcPointX(cam, 4), (this.calcPointY(cam, 4) + this.calcPointY(cam, 5)) / 2);
-        ctx.lineTo(this.calcPointX(cam, 5), this.calcPointY(cam, 5, true));
-        ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6, true));
-        ctx.lineTo(this.calcPointX(cam, 1), (this.calcPointY(cam, 1) + this.calcPointY(cam, 6)) / 2);
+        if (this.isBottomTile) {
+            drawBorder = true;
+        }
 
-        ctx.closePath();
-        ctx.fill();
+        if (drawBorder) {
+            ctx.fillStyle = this.colorScheme.colorDark;
+            ctx.beginPath();
+
+            ctx.moveTo(this.calcPointX(cam, 1), this.calcPointY(cam, 1))
+            ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6));
+            ctx.lineTo(this.calcPointX(cam, 5), this.calcPointY(cam, 5));
+            ctx.lineTo(this.calcPointX(cam, 4), this.calcPointY(cam, 4));
+
+            ctx.lineTo(this.calcPointX(cam, 4), (this.calcPointY(cam, 4) + this.calcPointY(cam, 5)) / 2);
+            ctx.lineTo(this.calcPointX(cam, 5), this.calcPointY(cam, 5, true));
+            ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6, true));
+            ctx.lineTo(this.calcPointX(cam, 1), (this.calcPointY(cam, 1) + this.calcPointY(cam, 6)) / 2);
+
+            ctx.closePath();
+            ctx.fill();
+        }
 
     }
 
@@ -588,16 +640,16 @@ class HexTile {
      * @return boolean True if the tile is visible, false otherwise.
      */
     public isVisible(cam: Camera): boolean {
-        if (this.posX + this.TILE_RADIUS < cam.offsetX) {
+        if (this.posX + AppConstants.TILE_RADIUS < cam.offsetX) {
             return false;
         }
-        if (this.posY + this.TILE_RADIUS < cam.offsetY) {
+        if (this.posY + AppConstants.TILE_RADIUS < cam.offsetY) {
             return false;
         }
-        if (this.posX - this.TILE_RADIUS > cam.offsetX + cam.width) {
+        if (this.posX - AppConstants.TILE_RADIUS > cam.offsetX + cam.width) {
             return false;
         }
-        if (this.posY - this.TILE_RADIUS > cam.offsetY + cam.height) {
+        if (this.posY - AppConstants.TILE_RADIUS > cam.offsetY + cam.height) {
             return false;
         }
         return true;
@@ -608,15 +660,15 @@ class HexTile {
 
         switch (point) {
             case 1:
-                return baseX - this.TILE_RADIUS;
+                return baseX - AppConstants.TILE_RADIUS;
             case 2:
             case 6:
-                return baseX - this.TILE_RADIUS * Math.cos(60 * Math.PI / 180);
+                return baseX - AppConstants.TILE_RADIUS * Math.cos(60 * Math.PI / 180);
             case 3:
             case 5:
-                return baseX + this.TILE_RADIUS * Math.cos(60 * Math.PI / 180);
+                return baseX + AppConstants.TILE_RADIUS * Math.cos(60 * Math.PI / 180);
             case 4:
-                return baseX + this.TILE_RADIUS;
+                return baseX + AppConstants.TILE_RADIUS;
             default:
                 return 0;
         }
@@ -625,7 +677,7 @@ class HexTile {
 
     private calcPointY(cam: Camera, point: number, ignoreCameraAngle: boolean = false): number {
         let baseY = this.posY - cam.offsetY;
-        let tileRadiusProjected = this.TILE_RADIUS *
+        let tileRadiusProjected = AppConstants.TILE_RADIUS *
             (ignoreCameraAngle ? 1 : Math.sin(cam.angleToGround * Math.PI / 180));
 
         switch (point) {
@@ -681,19 +733,203 @@ class HexTileColorScheme {
 }
 
 class World {
-
     private tiles: HexTile[];
+    private year: number;
 
     constructor() {
         this.tiles = [];
 
-        this.tiles.push(new HexTile(0, 0));
+        //        this.tiles.push(new HexTile(0, 0));
+        this.tiles = WorldGen.createFourSeasons();
+        this.year = (new Date()).getFullYear();
     }
 
     public render(cam: Camera, ctx: CanvasRenderingContext2D): void {
         for (let tile of this.tiles) {
             tile.render(cam, ctx);
         }
+
+        ctx.fillStyle = AppConstants.COLOR_CUTE_WHITE;
+        ctx.font = "48px " + AppConstants.FONT_BRAND;
+        ctx.fillText("" + this.year, 0, 0);
+    }
+}
+
+class TileGrid {
+    private _width: number;
+    private _x: number;
+    private _y: number;
+    private _occupancy: number;
+
+    get width(): number {
+        return this._width;
+    }
+
+    set width(_: number) {
+        this._width = _;
+    }
+
+    get x(): number {
+        return this._x;
+    }
+
+    set x(_: number) {
+        this._x = _;
+    }
+
+    get y(): number {
+        return this._y;
+    }
+
+    set y(_: number) {
+        this._y = _;
+    }
+
+    constructor(x: number, y: number, width: number) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+
+        this._occupancy = 0;
+    }
+
+    public getNextCoordX(): number {
+        let rowParity = Math.floor(this._occupancy / this.width) % 2;
+        return 3 * AppConstants.TILE_RADIUS * (this._occupancy % this.width) + (rowParity * AppConstants.TILE_RADIUS * 1.5) + this.x;
+    }
+
+    public getNextCoordY(): number {
+        return Math.sin(AppConstants.CAMERA_ANGLE_TO_GROUND * Math.PI / 180) * Math.sin(60 * Math.PI / 180) * AppConstants.TILE_RADIUS * Math.floor(this._occupancy / this.width) + this.y;
+    }
+
+    public addTile(): void {
+        this._occupancy++;
+    }
+}
+
+class WorldGen {
+
+    private static DAYS_PER_ROW = 12;
+    private static SEASON_X_LEFT = -(WorldGen.DAYS_PER_ROW * AppConstants.TILE_RADIUS) / 2;
+    private static SEASON_VERTICAL_SPACING = 256;
+
+    public static createFourSeasons(): HexTile[] {
+        let colorWinter: HexTileColorScheme = new HexTileColorScheme(
+            AppConstants.COLOR_CUTE_WHITE,
+            AppConstants.COLOR_CUTE_LIGHT,
+            AppConstants.COLOR_CUTE_GRAY
+        );
+
+        let colorSpring: HexTileColorScheme = new HexTileColorScheme(
+            AppConstants.COLOR_CUTE_GREEN,
+            AppConstants.COLOR_CUTE_GREEN_BORDER,
+            AppConstants.COLOR_CUTE_GREEN_HOVER
+        );
+
+        let colorSummer: HexTileColorScheme = new HexTileColorScheme(
+            AppConstants.COLOR_CUTE_YELLOW,
+            AppConstants.COLOR_CUTE_YELLOW_BORDER,
+            AppConstants.COLOR_CUTE_YELLOW_HOVER
+        );
+
+        let colorFall: HexTileColorScheme = new HexTileColorScheme(
+            AppConstants.COLOR_CUTE_ORANGE,
+            AppConstants.COLOR_CUTE_ORANGE_BORDER,
+            AppConstants.COLOR_CUTE_ORANGE_HOVER
+        );
+
+        let tiles: HexTile[] = [];
+
+
+        let year: number = (new Date().getFullYear()); // TODO: Should read this from the data set...
+        let daysInFeb: number = (year % 4 == 0) ? 29 : 28;
+
+        let daysInWinter: number = daysInFeb + 62;
+        let daysInSpring: number = 92;
+        let daysInSummer: number = 92;
+        let daysInFall: number = 91;
+
+        let winterGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING * -2, this.DAYS_PER_ROW);
+        let springGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING * -1, this.DAYS_PER_ROW);
+        let summerGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING, this.DAYS_PER_ROW);
+        let fallGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING * 2, this.DAYS_PER_ROW);
+
+
+        // Winter: December, January, February. 31 + 31 + 28/29 days.
+        let bottomIndex: number = this.calculateBottomTileBeginIndex(daysInWinter);
+        for (let i = 0; i < daysInWinter; i++) {
+            let tile = new HexTile(
+                winterGrid.getNextCoordX(),
+                winterGrid.getNextCoordY(),
+                colorWinter
+            );
+            if (i > bottomIndex) {
+                tile.isBottomTile = true;
+            }
+            tiles.push(tile);
+            winterGrid.addTile();
+        }
+
+        // Spring: March, April, May. 31 + 30 + 31 days.
+        bottomIndex = this.calculateBottomTileBeginIndex(daysInSpring)
+        for (let i = 0; i < daysInSpring; i++) {
+            let tile = new HexTile(
+                springGrid.getNextCoordX(),
+                springGrid.getNextCoordY(),
+                colorSpring
+            );
+            if (i > bottomIndex) {
+                tile.isBottomTile = true;
+            }
+            tiles.push(tile);
+            springGrid.addTile();
+        }
+
+        // Summer: June, July, August. 30 + 31 + 31 days.
+        bottomIndex = this.calculateBottomTileBeginIndex(daysInSummer);
+        for (let i = 0; i < daysInSummer; i++) {
+            let tile = new HexTile(
+                summerGrid.getNextCoordX(),
+                summerGrid.getNextCoordY(),
+                colorSummer
+            );
+            if (i >= bottomIndex) {
+                tile.isBottomTile = true;
+            }
+            tiles.push(tile);
+            summerGrid.addTile();
+        }
+
+        // Fall: September, October, November. 30 + 31 + 30 days.
+        bottomIndex = this.calculateBottomTileBeginIndex(daysInFall);
+        for (let i = 0; i < daysInFall; i++) {
+            let tile = new HexTile(
+                fallGrid.getNextCoordX(),
+                fallGrid.getNextCoordY(),
+                colorFall
+            );
+            if (i > bottomIndex) {
+                tile.isBottomTile = true;
+            }
+            tiles.push(tile);
+            fallGrid.addTile()
+        }
+
+        return tiles;
+
+    }
+
+    /**
+     * @summary Determine at which tile index the "bottom tiles" begin.
+     */
+    private static calculateBottomTileBeginIndex(numTiles: number) {
+        // How many tiles in last row?
+        let lastRowNumTiles = numTiles % this.DAYS_PER_ROW;
+
+        // Find the beginning of the last full row.
+        let lastFullRowFirstTile = this.DAYS_PER_ROW * Math.floor(numTiles / this.DAYS_PER_ROW);
+
+        return ((lastFullRowFirstTile - 1) - (this.DAYS_PER_ROW - lastRowNumTiles)) - this.DAYS_PER_ROW;
     }
 }
 
