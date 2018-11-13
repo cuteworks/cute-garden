@@ -316,7 +316,7 @@ class AppConfig {
 }
 
 class AppConstants {
-    public static TILE_RADIUS = 32;
+    public static TILE_RADIUS = 40;
     public static CAMERA_ANGLE_TO_GROUND = 45;
 
     public static FONT_BRAND = "Pacifico";
@@ -331,7 +331,7 @@ class AppConstants {
 
     public static COLOR_CUTE_WINTER = "#118ab2";
     public static COLOR_CUTE_WINTER_BORDER = "#0d6582";
-    public static COLOR_CUTE_WINTER_HOVER = "#083f51";
+    public static COLOR_CUTE_WINTER_HOVER = "#bedfea";
 
 
     //public static COLOR_CUTE_RED = "#bc3908";
@@ -340,15 +340,15 @@ class AppConstants {
 
     public static COLOR_CUTE_FALL = "#ef476f";
     public static COLOR_CUTE_FALL_BORDER = "#c43b5b";
-    public static COLOR_CUTE_FALL_HOVER = "#83273d";
+    public static COLOR_CUTE_FALL_HOVER = "#faccd7";
 
     public static COLOR_CUTE_SUMMER = "#ffd166";
     public static COLOR_CUTE_SUMMER_BORDER = "#d1ac54";
-    public static COLOR_CUTE_SUMMER_HOVER = "#8c7338";
+    public static COLOR_CUTE_SUMMER_HOVER = "#fff2d6";
 
     public static COLOR_CUTE_SPRING = "#06d6a0";
     public static COLOR_CUTE_SPRING_BORDER = "#05b083";
-    public static COLOR_CUTE_SPRING_HOVER = "#047558";
+    public static COLOR_CUTE_SPRING_HOVER = "#bbf3e5";
 }
 
 class Renderer {
@@ -841,6 +841,8 @@ class EntityText {
     private _x: number;
     private _y: number;
 
+    private _shadowColor: string;
+
     get text(): string {
         return this._text;
     }
@@ -889,21 +891,37 @@ class EntityText {
         this._y = _;
     }
 
+    get shadowColor(): string {
+        return this._shadowColor;
+    }
 
-    constructor(text: string, font: string, size: string, color: string, x: number, y: number) {
+    set shadowColor(_: string) {
+        this._shadowColor = _;
+    }
+
+
+    constructor(text: string, font: string, size: string, color: string, x: number, y: number, shadowColor?: string) {
         this.text = text;
         this.font = font;
         this.size = size;
         this.color = color;
         this.x = x;
         this.y = y;
+        this.shadowColor = shadowColor;
     }
 
 
     public render(cam: Camera, ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.color;
         ctx.font = this.size + " " + this.font;
+
+        if (this.shadowColor) {
+            ctx.fillStyle = this.shadowColor;
+            ctx.fillText(this.text, this.x - cam.offsetX + 2, this.y - cam.offsetY + 2)
+        }
+
+        ctx.fillStyle = this.color;
         ctx.fillText(this.text, this.x - cam.offsetX, this.y - cam.offsetY);
+
     }
 
 }
@@ -965,7 +983,7 @@ class WorldGen {
                 winterGrid.getNextCoordY(),
                 colorWinter
             );
-            if (i > bottomIndex) {
+            if (i > bottomIndex || ((i + 1) % this.DAYS_PER_ROW == 0 && Math.floor(i / this.DAYS_PER_ROW) % 2 == 1)) {
                 tile.isBottomTile = true;
             }
             tiles.push(tile);
@@ -980,7 +998,7 @@ class WorldGen {
                 springGrid.getNextCoordY(),
                 colorSpring
             );
-            if (i > bottomIndex) {
+            if (i > bottomIndex || ((i + 1) % this.DAYS_PER_ROW == 0 && Math.floor(i / this.DAYS_PER_ROW) % 2 == 1)) {
                 tile.isBottomTile = true;
             }
             tiles.push(tile);
@@ -995,7 +1013,7 @@ class WorldGen {
                 summerGrid.getNextCoordY(),
                 colorSummer
             );
-            if (i >= bottomIndex) {
+            if (i > bottomIndex || ((i + 1) % this.DAYS_PER_ROW == 0 && Math.floor(i / this.DAYS_PER_ROW) % 2 == 1)) {
                 tile.isBottomTile = true;
             }
             tiles.push(tile);
@@ -1010,7 +1028,7 @@ class WorldGen {
                 fallGrid.getNextCoordY(),
                 colorFall
             );
-            if (i > bottomIndex) {
+            if (i > bottomIndex || ((i + 1) % this.DAYS_PER_ROW == 0 && Math.floor(i / this.DAYS_PER_ROW) % 2 == 1)) {
                 tile.isBottomTile = true;
             }
             tiles.push(tile);
@@ -1037,10 +1055,10 @@ class WorldGen {
     public static createSeasonLabels() {
         let labels: EntityText[] = [];
 
-        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -2 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5));
-        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5));
-        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, 0 + AppConstants.TILE_RADIUS * 0.5));
-        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, 1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5));
+        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -2 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_WINTER_BORDER));
+        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_SPRING_BORDER));
+        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, 0 + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_SUMMER_BORDER));
+        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, 1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_FALL_BORDER));
 
         return labels;
 
