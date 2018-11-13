@@ -325,9 +325,10 @@ class AppConstants {
 
     public static COLOR_GRAY = "#6d6875";
     public static COLOR_LIGHT = "#afacb3";
+    public  static COLOR_LIGHTER = "#e9e8ea";
     public static COLOR_WHITE = "#e4e3e5";
 
-    public static COLOR_BACKGROUND = AppConstants.COLOR_WHITE;
+    public static COLOR_BACKGROUND = AppConstants.COLOR_LIGHTER;
 
     public static COLOR_CUTE_WINTER = "#118ab2";
     public static COLOR_CUTE_WINTER_BORDER = "#0d6582";
@@ -346,9 +347,9 @@ class AppConstants {
     public static COLOR_CUTE_SUMMER_BORDER = "#d1ac54";
     public static COLOR_CUTE_SUMMER_HOVER = "#fff2d6";
 
-    public static COLOR_CUTE_SPRING = "#06d6a0";
-    public static COLOR_CUTE_SPRING_BORDER = "#05b083";
-    public static COLOR_CUTE_SPRING_HOVER = "#bbf3e5";
+    public static COLOR_CUTE_SPRING = "#3ed654";
+    public static COLOR_CUTE_SPRING_BORDER = "#33b045";
+    public static COLOR_CUTE_SPRING_HOVER = "#caf3d0";
 }
 
 class Renderer {
