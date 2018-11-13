@@ -310,6 +310,9 @@ class AppConstants {
     public static FONT_SERIF = "Roboto Slab";
 
     public static COLOR_BACKGROUND = "#141316";
+    public static COLOR_GRAY = "#6d6875";
+    public static COLOR_LIGHT = "#afacb3";
+    public static COLOR_WHITE = "#e4e3e5";
 
     public static COLOR_CUTE_WINTER = "#118ab2";
     public static COLOR_CUTE_WINTER_BORDER = "#0e7192";
@@ -733,25 +736,29 @@ class HexTileColorScheme {
 }
 
 class World {
-    private tiles: HexTile[];
+    private tiles: HexTile[] = [];
+    private seasonLabels: EntityText[] = [];
     private year: number;
 
-    constructor() {
-        this.tiles = [];
+    private yearEntity: EntityText;
 
-        //        this.tiles.push(new HexTile(0, 0));
+    constructor() {
         this.tiles = WorldGen.createFourSeasons();
+        this.seasonLabels = WorldGen.createSeasonLabels();
+
         this.year = (new Date()).getFullYear();
+        this.yearEntity = new EntityText(this.year + "", AppConstants.FONT_BRAND, "48px", AppConstants.COLOR_LIGHT, 0, 0);
     }
 
     public render(cam: Camera, ctx: CanvasRenderingContext2D): void {
         for (let tile of this.tiles) {
             tile.render(cam, ctx);
         }
+        for (let text of this.seasonLabels) {
+            text.render(cam, ctx);
+        }
 
-        ctx.fillStyle = AppConstants.COLOR_CUTE_WINTER;
-        ctx.font = "48px " + AppConstants.FONT_BRAND;
-        ctx.fillText("" + this.year, 0, 0);
+        this.yearEntity.render(cam, ctx);
     }
 }
 
@@ -807,10 +814,86 @@ class TileGrid {
     }
 }
 
+class EntityText {
+    private _text: string;
+    private _font: string;
+    private _size: string;
+
+    private _color: string;
+    private _x: number;
+    private _y: number;
+
+    get text(): string {
+        return this._text;
+    }
+
+    set text(_: string) {
+        this._text = _;
+    }
+
+    get font(): string {
+        return this._font;
+    }
+
+    set font(_: string) {
+        this._font = _;
+    }
+
+    get size(): string {
+        return this._size;
+    }
+
+    set size(_: string) {
+        this._size = _;
+    }
+
+    get color(): string {
+        return this._color;
+    }
+
+    set color(_: string) {
+        this._color = _;
+    }
+
+    get x(): number {
+        return this._x;
+    }
+
+    set x(_: number) {
+        this._x = _;
+    }
+
+    get y(): number {
+        return this._y;
+    }
+
+    set y(_: number) {
+        this._y = _;
+    }
+
+
+    constructor(text: string, font: string, size: string, color: string, x: number, y: number) {
+        this.text = text;
+        this.font = font;
+        this.size = size;
+        this.color = color;
+        this.x = x;
+        this.y = y;
+    }
+
+
+    public render(cam: Camera, ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = this.color;
+        ctx.font = this.size + " " + this.font;
+        ctx.fillText(this.text, this.x - cam.offsetX, this.y - cam.offsetY);
+    }
+
+}
+
 class WorldGen {
 
     private static DAYS_PER_ROW = 12;
-    private static SEASON_X_LEFT = -(WorldGen.DAYS_PER_ROW * AppConstants.TILE_RADIUS) / 2;
+    private static SEASON_X_LEFT = -(WorldGen.DAYS_PER_ROW / 2) * (3 * AppConstants.TILE_RADIUS) + AppConstants.TILE_RADIUS * 2 / 3;
     private static SEASON_VERTICAL_SPACING = 256;
 
     public static createFourSeasons(): HexTile[] {
@@ -930,6 +1013,18 @@ class WorldGen {
         let lastFullRowFirstTile = this.DAYS_PER_ROW * Math.floor(numTiles / this.DAYS_PER_ROW);
 
         return ((lastFullRowFirstTile - 1) - (this.DAYS_PER_ROW - lastRowNumTiles)) - this.DAYS_PER_ROW;
+    }
+
+    public static createSeasonLabels() {
+        let labels: EntityText[] = [];
+
+        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT, -2 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
+        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT, -1 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
+        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT, 1 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
+        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT, 2 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
+
+        return labels;
+
     }
 }
 
