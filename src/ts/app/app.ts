@@ -311,26 +311,26 @@ class AppConstants {
 
     public static COLOR_BACKGROUND = "#141316";
 
-    public static COLOR_CUTE_WHITE = "#e4e3e5";
-    public static COLOR_CUTE_LIGHT = "#afacb3";
-    public static COLOR_CUTE_GRAY = "#6d6875";
+    public static COLOR_CUTE_WINTER = "#118ab2";
+    public static COLOR_CUTE_WINTER_BORDER = "#0e7192";
+    public static COLOR_CUTE_WINTER_HOVER = "#083f51";
 
 
     //public static COLOR_CUTE_RED = "#bc3908";
     //public static COLOR_CUTE_RED_LIGHT = "#941b0c";
     //public static COLOR_CUTE_RED_DARK = "#621708";
 
-    public static COLOR_CUTE_ORANGE = "#fe7f2d";
-    public static COLOR_CUTE_ORANGE_BORDER = "#e2711d";
-    public static COLOR_CUTE_ORANGE_HOVER = "#492509";
+    public static COLOR_CUTE_FALL = "#ef476f";
+    public static COLOR_CUTE_FALL_BORDER = "#ef476f";
+    public static COLOR_CUTE_FALL_HOVER = "#83273d";
 
-    public static COLOR_CUTE_YELLOW = "#FFD23F";
-    public static COLOR_CUTE_YELLOW_BORDER = "#ffc005";
-    public static COLOR_CUTE_YELLOW_HOVER = "#544404";
+    public static COLOR_CUTE_SUMMER = "#ffd166";
+    public static COLOR_CUTE_SUMMER_BORDER = "#ffd166";
+    public static COLOR_CUTE_SUMMER_HOVER = "#8c7338";
 
-    public static COLOR_CUTE_GREEN = "#e0f404";
-    public static COLOR_CUTE_GREEN_BORDER = "#d8e804";
-    public static COLOR_CUTE_GREEN_HOVER = "#50540c";
+    public static COLOR_CUTE_SPRING = "#06d6a0";
+    public static COLOR_CUTE_SPRING_BORDER = "#06d6a0";
+    public static COLOR_CUTE_SPRING_HOVER = "#047558";
 }
 
 class Renderer {
@@ -561,9 +561,9 @@ class HexTile {
     constructor(x: number = 0,
                 y: number = 0,
                 colorScheme: HexTileColorScheme = new HexTileColorScheme(
-                    AppConstants.COLOR_CUTE_WHITE,
-                    AppConstants.COLOR_CUTE_LIGHT,
-                    AppConstants.COLOR_CUTE_GRAY)
+                    AppConstants.COLOR_CUTE_WINTER,
+                    AppConstants.COLOR_CUTE_WINTER_BORDER,
+                    AppConstants.COLOR_CUTE_WINTER_HOVER)
     ) {
         this.posX = x;
         this.posY = y;
@@ -749,7 +749,7 @@ class World {
             tile.render(cam, ctx);
         }
 
-        ctx.fillStyle = AppConstants.COLOR_CUTE_WHITE;
+        ctx.fillStyle = AppConstants.COLOR_CUTE_WINTER;
         ctx.font = "48px " + AppConstants.FONT_BRAND;
         ctx.fillText("" + this.year, 0, 0);
     }
@@ -815,27 +815,27 @@ class WorldGen {
 
     public static createFourSeasons(): HexTile[] {
         let colorWinter: HexTileColorScheme = new HexTileColorScheme(
-            AppConstants.COLOR_CUTE_WHITE,
-            AppConstants.COLOR_CUTE_LIGHT,
-            AppConstants.COLOR_CUTE_GRAY
+            AppConstants.COLOR_CUTE_WINTER,
+            AppConstants.COLOR_CUTE_WINTER_BORDER,
+            AppConstants.COLOR_CUTE_WINTER_HOVER
         );
 
         let colorSpring: HexTileColorScheme = new HexTileColorScheme(
-            AppConstants.COLOR_CUTE_GREEN,
-            AppConstants.COLOR_CUTE_GREEN_BORDER,
-            AppConstants.COLOR_CUTE_GREEN_HOVER
+            AppConstants.COLOR_CUTE_SPRING,
+            AppConstants.COLOR_CUTE_SPRING_BORDER,
+            AppConstants.COLOR_CUTE_SPRING_HOVER
         );
 
         let colorSummer: HexTileColorScheme = new HexTileColorScheme(
-            AppConstants.COLOR_CUTE_YELLOW,
-            AppConstants.COLOR_CUTE_YELLOW_BORDER,
-            AppConstants.COLOR_CUTE_YELLOW_HOVER
+            AppConstants.COLOR_CUTE_SUMMER,
+            AppConstants.COLOR_CUTE_SUMMER_BORDER,
+            AppConstants.COLOR_CUTE_SUMMER_HOVER
         );
 
         let colorFall: HexTileColorScheme = new HexTileColorScheme(
-            AppConstants.COLOR_CUTE_ORANGE,
-            AppConstants.COLOR_CUTE_ORANGE_BORDER,
-            AppConstants.COLOR_CUTE_ORANGE_HOVER
+            AppConstants.COLOR_CUTE_FALL,
+            AppConstants.COLOR_CUTE_FALL_BORDER,
+            AppConstants.COLOR_CUTE_FALL_HOVER
         );
 
         let tiles: HexTile[] = [];
