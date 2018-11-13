@@ -323,13 +323,14 @@ class AppConstants {
     public static FONT_SANS_SERIF = "Yantramanav";
     public static FONT_SERIF = "Roboto Slab";
 
-    public static COLOR_BACKGROUND = "#141316";
     public static COLOR_GRAY = "#6d6875";
     public static COLOR_LIGHT = "#afacb3";
     public static COLOR_WHITE = "#e4e3e5";
 
+    public static COLOR_BACKGROUND = AppConstants.COLOR_WHITE;
+
     public static COLOR_CUTE_WINTER = "#118ab2";
-    public static COLOR_CUTE_WINTER_BORDER = "#0e7192";
+    public static COLOR_CUTE_WINTER_BORDER = "#0d6582";
     public static COLOR_CUTE_WINTER_HOVER = "#083f51";
 
 
@@ -338,15 +339,15 @@ class AppConstants {
     //public static COLOR_CUTE_RED_DARK = "#621708";
 
     public static COLOR_CUTE_FALL = "#ef476f";
-    public static COLOR_CUTE_FALL_BORDER = "#ef476f";
+    public static COLOR_CUTE_FALL_BORDER = "#c43b5b";
     public static COLOR_CUTE_FALL_HOVER = "#83273d";
 
     public static COLOR_CUTE_SUMMER = "#ffd166";
-    public static COLOR_CUTE_SUMMER_BORDER = "#ffd166";
+    public static COLOR_CUTE_SUMMER_BORDER = "#d1ac54";
     public static COLOR_CUTE_SUMMER_HOVER = "#8c7338";
 
     public static COLOR_CUTE_SPRING = "#06d6a0";
-    public static COLOR_CUTE_SPRING_BORDER = "#06d6a0";
+    public static COLOR_CUTE_SPRING_BORDER = "#05b083";
     public static COLOR_CUTE_SPRING_HOVER = "#047558";
 }
 
@@ -761,18 +762,21 @@ class World {
         this.seasonLabels = WorldGen.createSeasonLabels();
 
         this.year = (new Date()).getFullYear();
-        this.yearEntity = new EntityText(this.year + "", AppConstants.FONT_BRAND, "48px", AppConstants.COLOR_LIGHT, 0, 0);
+        this.yearEntity = new EntityText(this.year + "", AppConstants.FONT_BRAND, "48px", AppConstants.COLOR_GRAY, 0, -2 * WorldGen.SEASON_VERTICAL_SPACING - 2 * AppConstants.TILE_RADIUS);
     }
 
     public render(cam: Camera, ctx: CanvasRenderingContext2D): void {
         for (let tile of this.tiles) {
             tile.render(cam, ctx);
         }
+
+        ctx.textAlign = "right";
         for (let text of this.seasonLabels) {
             text.render(cam, ctx);
         }
-
+        ctx.textAlign = "center";
         this.yearEntity.render(cam, ctx);
+        ctx.textAlign = "left";
     }
 }
 
@@ -906,9 +910,10 @@ class EntityText {
 
 class WorldGen {
 
-    private static DAYS_PER_ROW = 12;
+    private static DAYS_PER_ROW = 8;
     private static SEASON_X_LEFT = -(WorldGen.DAYS_PER_ROW / 2) * (3 * AppConstants.TILE_RADIUS) + AppConstants.TILE_RADIUS * 2 / 3;
-    private static SEASON_VERTICAL_SPACING = 256;
+    public static SEASON_VERTICAL_SPACING = AppConstants.TILE_RADIUS * Math.sin(Math.PI * 60 / 180) * Math.floor(92 / WorldGen.DAYS_PER_ROW) - AppConstants.TILE_RADIUS;
+    private static TEXT_LEFT_OFFSET = -2 * AppConstants.TILE_RADIUS;
 
     public static createFourSeasons(): HexTile[] {
         let colorWinter: HexTileColorScheme = new HexTileColorScheme(
@@ -948,8 +953,8 @@ class WorldGen {
 
         let winterGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING * -2, this.DAYS_PER_ROW);
         let springGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING * -1, this.DAYS_PER_ROW);
-        let summerGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING, this.DAYS_PER_ROW);
-        let fallGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING * 2, this.DAYS_PER_ROW);
+        let summerGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, 0, this.DAYS_PER_ROW);
+        let fallGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING, this.DAYS_PER_ROW);
 
 
         // Winter: December, January, February. 31 + 31 + 28/29 days.
@@ -1032,10 +1037,10 @@ class WorldGen {
     public static createSeasonLabels() {
         let labels: EntityText[] = [];
 
-        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT, -2 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
-        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT, -1 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
-        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT, 1 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
-        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT, 2 * this.SEASON_VERTICAL_SPACING - AppConstants.TILE_RADIUS * 1.25));
+        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -2 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5));
+        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5));
+        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, 0 + AppConstants.TILE_RADIUS * 0.5));
+        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, 1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5));
 
         return labels;
 

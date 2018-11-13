@@ -7,4 +7,4 @@ app = Flask(__name__)
 init_all_routes(app)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
