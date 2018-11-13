@@ -87,15 +87,29 @@ class app {
         $(window).on("resize", () => {
             this.onResize();
         });
+
         this.$canvas.on("mousemove", (evt: Event) => {
             this.onMouseMove(evt as MouseEvent);
         });
+        this.$canvas.on("touchmove", (evt: Event) => {
+            this.onMouseMove(evt as MouseEvent);
+        });
+
+
         this.$canvas.on("mousedown", (evt: Event) => {
             this.onMouseDown(evt as MouseEvent);
         });
+        this.$canvas.on("touchstart", (evt: Event) => {
+            this.onMouseDown(evt as MouseEvent);
+        });
+
         this.$canvas.on("mouseup", (evt: Event) => {
             this.onMouseUp(evt as MouseEvent);
         });
+        this.$canvas.on("touchend", (evt: Event) => {
+            this.onMouseUp(evt as MouseEvent);
+        });
+
         this.$canvas.on("mouseleave", (evt: Event) => {
             this.onMouseLeave(evt as MouseEvent);
         });
