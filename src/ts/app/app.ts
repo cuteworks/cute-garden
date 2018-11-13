@@ -21,6 +21,11 @@ class app {
     private _mouseRelX: number;
     private _mouseRelY: number;
 
+    private _mouseIsDown: boolean;
+    private _mouseIsDrag: boolean;
+    private _mouseDragAnchorX: number;
+    private _mouseDragAnchorY: number;
+
     //#region Getters / setters
 
     public get cw(): number {
@@ -84,7 +89,16 @@ class app {
         });
         this.$canvas.on("mousemove", (evt: Event) => {
             this.onMouseMove(evt as MouseEvent);
-        })
+        });
+        this.$canvas.on("mousedown", (evt: Event) => {
+            this.onMouseDown(evt as MouseEvent);
+        });
+        this.$canvas.on("mouseup", (evt: Event) => {
+            this.onMouseUp(evt as MouseEvent);
+        });
+        this.$canvas.on("mouseleave", (evt: Event) => {
+            this.onMouseLeave(evt as MouseEvent);
+        });
     }
 
     private initCanvas(): void {
@@ -101,6 +115,9 @@ class app {
         window.setInterval(() => {
             this.updateFPS();
         }, 1000);
+        window.setInterval(() => {
+            this.loop();
+        }, this._config.tick_delay);
     }
 
 
@@ -116,7 +133,7 @@ class app {
         let oldHeight = this.cam.height;
 
         this.canvasResizeToContainer();
-        
+
         let newWidth = this.cam.width;
         let newHeight = this.cam.height;
 
@@ -128,8 +145,59 @@ class app {
 
     protected onMouseMove(evt: MouseEvent): void {
         let rect = (this.$canvas.get(0) as HTMLElement).getBoundingClientRect();
+
         this._mouseRelX = evt.clientX - rect.left;
         this._mouseRelY = evt.clientY - rect.top;
+
+        if (this._mouseIsDown) {
+            this._mouseIsDrag = true;
+        }
+
+        if (this._mouseIsDrag) {
+            let deltaX = (this._mouseRelX - this._mouseDragAnchorX) * this._config.pan_multiplier;
+            let deltaY = (this._mouseRelY - this._mouseDragAnchorY) * this._config.pan_multiplier;
+
+            this.cam.offsetX -= deltaX;
+            this.cam.offsetY -= deltaY;
+
+            this._cam.momentumX = -deltaX * this._config.momentum_multiplier;
+            this._cam.momentumY = -deltaY * this._config.momentum_multiplier;
+
+            this._mouseDragAnchorX = this._mouseRelX;
+            this._mouseDragAnchorY = this._mouseRelY;
+        }
+    }
+
+    /**
+     * @summary Mouse down handler for initializing a drag.
+     * @param evt The mouse down event.
+     */
+    protected onMouseDown(_evt: MouseEvent): void {
+        this._mouseIsDown = true;
+        this._mouseDragAnchorX = this._mouseRelX;
+        this._mouseDragAnchorY = this._mouseRelY;
+
+        this.cam.applyMomentum = false;
+    }
+
+    /**
+     * @summary Mouse up handler for releasing a drag or for click events.
+     * @param evt The mouse up event.
+     */
+    protected onMouseUp(_evt: MouseEvent): void {
+        this._mouseIsDown = false;
+        this._mouseIsDrag = false;
+
+        this._cam.applyMomentum = true;
+    }
+
+    /**
+     * @summary Mouse leave handler for the canvas - when the mouse leaves, cancel any ongoing drag events.
+     * @param evt The mouse leave event.
+     */
+    protected onMouseLeave(_evt: MouseEvent): void {
+        //this._mouseIsDrag = false;
+        //this._mouseIsDown = false;
     }
 
     //#endregion
@@ -196,6 +264,16 @@ class app {
         this._framesDrawn++;
     }
 
+    //#endregion
+
+    //#region Game loop
+
+    /**
+     * @summary Game main logic loop. Call event logic on world, camera, and anything else that needs to run logic.
+     */
+    public loop() {
+        this._cam.loop();
+    }
 
     //#endregion
 }
@@ -205,10 +283,20 @@ class AppConfig {
     public debug_showCanvasBoundingBox: boolean;
     public debug_showCursor: boolean;
 
+    public pan_multiplier: number;
+    public tick_delay: number;
+
+    public momentum_multiplier: number;
+
     constructor() {
         this.debug_showFPS = true;
         this.debug_showCanvasBoundingBox = true;
         this.debug_showCursor = true;
+
+        this.pan_multiplier = 1.0;
+        this.tick_delay = 33;
+
+        this.momentum_multiplier = 1.5;
     }
 
 }
@@ -261,6 +349,9 @@ class Camera {
     private _mouseWorldY: number;
     private _mouseScreenX: number;
     private _mouseScreenY: number;
+    private _applyMomentum: boolean;
+    private _momentumX: number;
+    private _momentumY: number;
     private _angleToGround: number;
 
     get offsetX(): number {
@@ -327,6 +418,30 @@ class Camera {
         this._mouseScreenY = _;
     }
 
+    get momentumX(): number {
+        return this._momentumX;
+    }
+
+    set momentumX(_: number) {
+        this._momentumX = _;
+    }
+
+    get momentumY(): number {
+        return this._momentumY;
+    }
+
+    set momentumY(_: number) {
+        this._momentumY = _;
+    }
+
+    get applyMomentum(): boolean {
+        return this._applyMomentum;
+    }
+
+    set applyMomentum(_: boolean) {
+        this._applyMomentum = _;
+    }
+
     get angleToGround(): number {
         return this._angleToGround;
     }
@@ -346,6 +461,34 @@ class Camera {
         this.mouseWorldY = 0;
         this.mouseScreenX = 0;
         this.mouseScreenY = 0;
+        this.applyMomentum = false;
+        this.momentumX = 0;
+        this.momentumY = 0;
+    }
+
+    /**
+     * @summary Logic loop for camera - apply momentum to offset and decrease momentum.
+     */
+    public loop(): void {
+        if (!this.applyMomentum) {
+            return;
+        }
+        if (Math.abs(this._momentumX) < 0.5) {
+            this._momentumX = 0;
+        }
+        if (Math.abs(this._momentumY) < 0.5) {
+            this._momentumY = 0;
+        }
+        if (Math.abs(this._momentumX) < 0.5 && Math.abs(this._momentumY) < 0.5) {
+            this.applyMomentum = false;
+            return;
+        }
+
+        this.offsetX += this._momentumX;
+        this.offsetY += this._momentumY;
+
+        this._momentumX /= 1.1;
+        this._momentumY /= 1.1;
     }
 }
 
