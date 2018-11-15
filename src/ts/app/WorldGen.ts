@@ -41,6 +41,8 @@ export class WorldGen {
         let summerGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, 0, this.DAYS_PER_ROW);
         let fallGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING, this.DAYS_PER_ROW);
 
+        let year: number = (new Date().getFullYear()); // TODO: Should read current year from the data set...
+
         let daysInFeb: number = (year % 4 == 0) ? 29 : 28;
         let daysInWinter: number = daysInFeb + 62;  // Winter: December, January, February. 31 + 31 + 28/29 days.
         let daysInSpring: number = 92;              // Spring: March, April, May. 31 + 30 + 31 days.
@@ -53,10 +55,8 @@ export class WorldGen {
             daysInFall
         ];
 
-
         let tiles: HexTile[] = [];
-
-        let year: number = (new Date().getFullYear()); // TODO: Should read current year from the data set...
+        
 
         for (let seasonIdx = 0; seasonIdx < daysInSeasons.length; seasonIdx++) {
             let bottomIndex: number = this.calculateBottomTileBeginIndex(daysInSeasons[seasonIdx]);
