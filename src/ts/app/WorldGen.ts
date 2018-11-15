@@ -56,7 +56,7 @@ export class WorldGen {
         ];
 
         let tiles: HexTile[] = [];
-        
+
 
         for (let seasonIdx = 0; seasonIdx < daysInSeasons.length; seasonIdx++) {
             let bottomIndex: number = this.calculateBottomTileBeginIndex(daysInSeasons[seasonIdx]);
@@ -124,10 +124,10 @@ export class WorldGen {
     public static createSeasonLabels() {
         let labels: EntityText[] = [];
 
-        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -2 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_WINTER_BORDER));
-        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_SPRING_BORDER));
-        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_SUMMER_BORDER));
-        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_CUTE_FALL_BORDER));
+        labels.push(new EntityText("Winter", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_WINTER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -2 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_BLACK));
+        labels.push(new EntityText("Spring", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SPRING, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, -1 * this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_BLACK));
+        labels.push(new EntityText("Summer", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_SUMMER, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_BLACK));
+        labels.push(new EntityText("Fall", AppConstants.FONT_BRAND, "36px", AppConstants.COLOR_CUTE_FALL, this.SEASON_X_LEFT + this.TEXT_LEFT_OFFSET, this.SEASON_VERTICAL_SPACING + AppConstants.TILE_RADIUS * 0.5, AppConstants.COLOR_BLACK));
 
         return labels;
 

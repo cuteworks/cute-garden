@@ -6,6 +6,7 @@ export class AppConstants {
     public static FONT_SANS_SERIF = "Yantramanav";
     public static FONT_SERIF = "Roboto Slab";
 
+    public static COLOR_BLACK = "#141316";
     public static COLOR_GRAY = "#6d6875";
     public static COLOR_LIGHT = "#afacb3";
     public  static COLOR_LIGHTER = "#e9e8ea";
@@ -26,8 +27,8 @@ export class AppConstants {
     public static COLOR_CUTE_FALL_BORDER = "#c43b5b";
     public static COLOR_CUTE_FALL_HOVER = "#faccd7";
 
-    public static COLOR_CUTE_SUMMER = "#ffd166";
-    public static COLOR_CUTE_SUMMER_BORDER = "#d1ac54";
+    public static COLOR_CUTE_SUMMER = "#ffbf66";
+    public static COLOR_CUTE_SUMMER_BORDER = "#d19453";
     public static COLOR_CUTE_SUMMER_HOVER = "#fff2d6";
 
     public static COLOR_CUTE_SPRING = "#3ed654";
