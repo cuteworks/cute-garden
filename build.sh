@@ -26,6 +26,10 @@ fi
 rm -rf static/js/bin
 tsc
 
+# Until browsers support JS modules, bundle with browserify.
+mv static/js/bin/app/app.js static/js/bin/app/app.module.js
+browserify static/js/bin/app/app.module.js -o static/js/bin/app/app.js
+
 echo "-----------------------------------------------------------------------------------"
 echo "Build complete - execute './build-run.sh' to start the server."
 echo "-----------------------------------------------------------------------------------"
