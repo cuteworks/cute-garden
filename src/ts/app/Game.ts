@@ -57,22 +57,22 @@ export class Game {
     constructor(world: World) {
         this._world = world;
 
-        this.init();
-        this.animate();
+        this.__init();
+        this.__animate();
     }
 
     //#region Initialization
 
-    private init(): void {
-        this.initVars();
-        this.initElements();
-        this.initListeners();
-        this.initCanvas();
-        this.initCamera();
-        this.initTimers();
+    private __init(): void {
+        this.__initVars();
+        this.__initElements();
+        this.__initListeners();
+        this.__initCanvas();
+        this.__initCamera();
+        this.__initTimers();
     }
 
-    private initVars(): void {
+    private __initVars(): void {
         this._fps = 0;
         this._framesDrawn = 0;
 
@@ -85,12 +85,12 @@ export class Game {
         this._mouseDragAnchorY = 0;
     }
 
-    private initElements(): void {
+    private __initElements(): void {
         this.$canvas = $("#cutegarden-canvas");
         this.$canvasContainer = $("#cutegarden-canvas-container");
     }
 
-    private initListeners(): void {
+    private __initListeners(): void {
         $(window).on("resize", () => {
             this.onResize();
         });
@@ -116,23 +116,19 @@ export class Game {
         this.$canvas.on("touchend", (evt: Event) => {
             this.onTouchUp(evt as TouchEvent);
         });
-
-        this.$canvas.on("mouseleave", (evt: Event) => {
-            this.onMouseLeave(evt as MouseEvent);
-        });
     }
 
-    private initCanvas(): void {
+    private __initCanvas(): void {
         this._ctx = (this.$canvas.get(0) as HTMLCanvasElement).getContext("2d");
         this.canvasResizeToContainer();
     }
 
 
-    private initCamera(): void {
+    private __initCamera(): void {
         this._cam = new Camera(-this.cw / 2, -this.ch / 2, this.cw, this.ch, AppConstants.CAMERA_ANGLE_TO_GROUND);
     }
 
-    private initTimers(): void {
+    private __initTimers(): void {
         window.setInterval(() => {
             this.updateFPS();
         }, 1000);
@@ -183,16 +179,6 @@ export class Game {
     protected onMouseUp(_evt: MouseEvent): void {
         this.__inputDeviceUp();
     }
-
-    /**
-     * @summary Mouse leave handler for the canvas - when the mouse leaves, cancel any ongoing drag events.
-     * @param _evt The mouse leave event.
-     */
-    protected onMouseLeave(_evt: MouseEvent): void {
-        //this._mouseIsDrag = false;
-        //this._mouseIsDown = false;
-    }
-
 
     protected onTouchDown(_evt: TouchEvent): void {
         //this.__inputDeviceDown();
@@ -277,18 +263,18 @@ export class Game {
     /**
      * @summary Kick off the canvas's rendering - the canvas will automatically be re-rendered.
      */
-    private animate(): void {
+    private __animate(): void {
         window.requestAnimationFrame(() => {
-            this.animate_impl();
+            this.__animate_impl();
         });
     }
 
     /**
      * @summary Automatically call canvasRedraw when the next animation frame is ready.
      */
-    private animate_impl(): void {
+    private __animate_impl(): void {
         window.requestAnimationFrame(() => {
-            this.animate_impl();
+            this.__animate_impl();
         });
 
         this.canvasRedraw();
