@@ -7,8 +7,9 @@ import {EntityText} from "./EntityText";
 export class WorldGen {
 
     private static DAYS_PER_ROW = 8;
-    private static SEASON_X_LEFT = -(WorldGen.DAYS_PER_ROW / 2) * (3 * AppConstants.TILE_RADIUS) + AppConstants.TILE_RADIUS * 2 / 3;
-    public static SEASON_VERTICAL_SPACING = AppConstants.TILE_RADIUS * Math.sin(Math.PI * 60 / 180) * Math.floor(92 / WorldGen.DAYS_PER_ROW) - AppConstants.TILE_RADIUS;
+    private static SEASON_X_LEFT = -(WorldGen.DAYS_PER_ROW * (AppConstants.TILE_RADIUS + TileGrid.SPACING_X));
+    public static SEASON_VERTICAL_SPACING = (AppConstants.TILE_RADIUS + TileGrid.SPACING_Y) * Math.sin(Math.PI * 60 / 180) * Math.floor(92 / WorldGen.DAYS_PER_ROW) - (AppConstants.TILE_RADIUS - TileGrid.SPACING_Y);
+
     private static TEXT_LEFT_OFFSET = -2 * AppConstants.TILE_RADIUS;
 
     public static createFourSeasons(): HexTile[] {
@@ -118,7 +119,8 @@ export class WorldGen {
         ) {
             return true;
         }
-        return false;
+        return true;
+        //return false; -- Now with spacing, don't need to hide the border for inner tiles.
     }
 
     public static createSeasonLabels() {

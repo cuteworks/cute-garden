@@ -1,6 +1,9 @@
 import {AppConstants} from "./AppConstants";
 
 export class TileGrid {
+    public static SPACING_X = 24;
+    public static SPACING_Y = 24;
+
     private _width: number;
     private _x: number;
     private _y: number;
@@ -40,11 +43,11 @@ export class TileGrid {
 
     public getNextCoordX(): number {
         let rowParity = Math.floor(this._occupancy / this.width) % 2;
-        return 3 * AppConstants.TILE_RADIUS * (this._occupancy % this.width) + (rowParity * AppConstants.TILE_RADIUS * 1.5) + this.x;
+        return 3 * AppConstants.TILE_RADIUS * (this._occupancy % this.width) + (rowParity * (AppConstants.TILE_RADIUS * 1.5 + TileGrid.SPACING_X / 2)) + this.x + TileGrid.SPACING_X * (this._occupancy % this.width);
     }
 
     public getNextCoordY(): number {
-        return Math.sin(AppConstants.CAMERA_ANGLE_TO_GROUND * Math.PI / 180) * Math.sin(60 * Math.PI / 180) * AppConstants.TILE_RADIUS * Math.floor(this._occupancy / this.width) + this.y;
+        return Math.sin(AppConstants.CAMERA_ANGLE_TO_GROUND * Math.PI / 180) * Math.sin(60 * Math.PI / 180) * AppConstants.TILE_RADIUS * Math.floor(this._occupancy / this.width) + this.y + TileGrid.SPACING_Y * (Math.floor(this._occupancy / this.width)) ;
     }
 
     public addTile(): void {
