@@ -152,4 +152,32 @@ export class Camera implements ILoopable {
         this._momentumX /= 1.1;
         this._momentumY /= 1.1;
     }
+
+    /**
+     * @summary Set the momentum of the camera such that it will "land" on the given point.
+     * @param x The x-coordinate to scroll to.
+     * @param y The y-coordinate to scroll to.
+     */
+    public setMomentumTowards(x: number, y: number) {
+        let camCenterX = this.offsetX + this.width / 2;
+        let camCenterY = this.offsetY + this.height / 2;
+
+        let deltaX = x - camCenterX;
+        let deltaY = y - camCenterY;
+
+        console.log("From (" + camCenterX + ", " + camCenterY + "), seeking (" + x + ", " + y + "). Delta needed: (" + deltaX + ", " + deltaY + ")");
+
+        // Need to add deltaX and deltaY to the offsets via momentum.
+        this._momentumX = deltaX / 11;
+        this._momentumY = deltaY / 11;
+
+    }
+
+    public mapScreenToWorldX(x: number): number {
+        return x + this.offsetX;
+    }
+
+    public mapScreenToWorldY(y: number): number {
+        return y + this.offsetY;
+    }
 }

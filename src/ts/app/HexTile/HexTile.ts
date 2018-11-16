@@ -2,13 +2,18 @@ import {IRenderable} from "../IRenderable";
 import {HexTileColorScheme} from "./HexTileColorScheme";
 import {AppConstants} from "../AppConstants";
 import {Camera} from "../Camera";
+import {CalendarDay} from "../Calendar/CalendarDay";
 
 export class HexTile implements IRenderable {
     private _posX: number;
     private _poxY: number;
 
     private _colorScheme: HexTileColorScheme;
-    private _isBottomTile: boolean;
+    private _isBottomTile: boolean = false;
+    private _isInFuture: boolean = false;
+    private _isSelected: boolean = false;
+
+    private _calendarDay: CalendarDay;
 
     //#region Getters / setters
 
@@ -44,17 +49,45 @@ export class HexTile implements IRenderable {
         this._isBottomTile = _;
     }
 
+    get isInFuture(): boolean {
+        return this._isInFuture;
+    }
+
+    set isInFuture(_: boolean) {
+        this._isInFuture = _;
+    }
+
+    get calendarDay(): CalendarDay {
+        return this._calendarDay;
+    }
+
+    set calendarDay(_: CalendarDay) {
+        this._calendarDay = _;
+    }
+
+    get isSelected(): boolean {
+        return this._isSelected;
+    }
+
+    set isSelected(_: boolean) {
+        this._isSelected = _;
+    }
+
+    //#endregion
+
 
     constructor(x: number = 0,
                 y: number = 0,
                 colorScheme: HexTileColorScheme = new HexTileColorScheme(
                     AppConstants.COLOR_CUTE_WINTER,
                     AppConstants.COLOR_CUTE_WINTER_BORDER,
-                    AppConstants.COLOR_CUTE_WINTER_HOVER)
+                    AppConstants.COLOR_CUTE_WINTER_HOVER),
+                calendarDay: CalendarDay
     ) {
         this.posX = x;
         this.posY = y;
         this.colorScheme = colorScheme;
+        this.calendarDay = calendarDay;
     }
 
     /**
@@ -71,6 +104,11 @@ export class HexTile implements IRenderable {
         ctx.lineWidth = 2;
         ctx.lineJoin = "round";
         ctx.strokeStyle = this.colorScheme.color;
+
+        if (!this._isInFuture) {
+            ctx.globalAlpha = 0.5;
+        }
+
         ctx.beginPath();
 
         ctx.moveTo(this.calcPointX(cam, 1), this.calcPointY(cam, 1));
@@ -83,8 +121,8 @@ export class HexTile implements IRenderable {
         ctx.closePath();
 
 
-        if (ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY)) {
-            ctx.fillStyle = AppConstants.COLOR_DARK;
+        if (ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY) || this.isSelected) {
+            ctx.fillStyle = this.isSelected ? AppConstants.COLOR_LIGHT : AppConstants.COLOR_DARK;
             ctx.fill();
         } else {
             // Bottom tiles that are not hovered need to clear their inside to the background color, or else the bottom
@@ -119,6 +157,8 @@ export class HexTile implements IRenderable {
             ctx.fill();
         }
 
+        ctx.globalAlpha = 1.0;
+
     }
 
     /**
@@ -142,6 +182,22 @@ export class HexTile implements IRenderable {
 
         return true;
     }
+
+    /**
+     * @summary Determine if this tile contains a point - typically a click target. Bounding box is a little larger than
+     *          the visible tile to allow for some flexibility in selecting.
+     * @param x The x-coordinate to test for containment.
+     * @param y The y-coordinate to test for containment.
+     */
+    public containsPoint(x: number, y: number) {
+        let boundX = this.posX - AppConstants.TILE_RADIUS;
+        let boundY = this.posY - AppConstants.TILE_RADIUS;
+        let boundXX = this.posX + AppConstants.TILE_RADIUS;
+        let boundYY = this.posY + AppConstants.TILE_RADIUS;
+
+        return boundX < x && boundY < y && x < boundXX && y < boundYY;
+    }
+
 
     private calcPointX(cam: Camera, point: number): number {
         let baseX = this.posX - cam.offsetX;

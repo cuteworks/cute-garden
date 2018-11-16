@@ -4,13 +4,30 @@ import {EntityText} from "./EntityText";
 import {WorldGen} from "./WorldGen";
 import {AppConstants} from "./AppConstants";
 import {Camera} from "./Camera";
+import {Game} from "./Game";
 
 export class World implements IRenderable {
+
+    private _game: Game;
+
     private tiles: HexTile[] = [];
     private seasonLabels: EntityText[] = [];
     private year: number;
 
     private yearEntity: EntityText;
+
+    //#region Getters / setters
+
+    get game(): Game {
+        return this._game;
+    }
+
+    set game(_: Game) {
+        this._game = _;
+    }
+
+    //#endregion
+
 
     constructor() {
         this.tiles = WorldGen.createFourSeasons();
@@ -32,5 +49,21 @@ export class World implements IRenderable {
         ctx.textAlign = "center";
         this.yearEntity.render(cam, ctx);
         ctx.textAlign = "left";
+    }
+
+    public worldClick(x: number, y: number) {
+        let firstTileSelected: HexTile;
+
+        // Check if we're selecting a tile..
+        for (let tile of this.tiles) {
+            tile.isSelected = tile.containsPoint(x, y);
+            if (!firstTileSelected && tile.isSelected) {
+                firstTileSelected = tile;
+            }
+        }
+
+        if (firstTileSelected) {
+            this._game.cam.setMomentumTowards(firstTileSelected.posX, firstTileSelected.posY);
+        }
     }
 }

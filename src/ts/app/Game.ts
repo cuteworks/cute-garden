@@ -56,6 +56,7 @@ export class Game {
 
     constructor(world: World) {
         this._world = world;
+        this._world.game = this;
 
         this.__init();
         this.__animate();
@@ -216,6 +217,12 @@ export class Game {
     }
 
     private __inputDeviceUp(): void {
+        if (!this._mouseIsDrag) {
+            if (this._world) {
+                this._world.worldClick(this.cam.mapScreenToWorldX(this._mouseRelX), this.cam.mapScreenToWorldY(this._mouseRelY));
+            }
+        }
+
         this._mouseIsDown = false;
         this._mouseIsDrag = false;
 

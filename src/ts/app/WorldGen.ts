@@ -3,6 +3,7 @@ import {HexTile} from "./HexTile/HexTile";
 import {HexTileColorScheme} from "./HexTile/HexTileColorScheme";
 import {TileGrid} from "./TileGrid";
 import {EntityText} from "./EntityText";
+import {CalendarGen} from "./Calendar/CalendarGen";
 
 export class WorldGen {
 
@@ -43,6 +44,7 @@ export class WorldGen {
         let fallGrid: TileGrid = new TileGrid(this.SEASON_X_LEFT, this.SEASON_VERTICAL_SPACING, this.DAYS_PER_ROW);
 
         let year: number = (new Date().getFullYear()); // TODO: Should read current year from the data set...
+        let calGen: CalendarGen = new CalendarGen(year);
 
         let daysInFeb: number = (year % 4 == 0) ? 29 : 28;
         let daysInWinter: number = daysInFeb + 62;  // Winter: December, January, February. 31 + 31 + 28/29 days.
@@ -78,13 +80,15 @@ export class WorldGen {
                 let tile = new HexTile(
                     currentGrid.getNextCoordX(),
                     currentGrid.getNextCoordY(),
-                    currentColor
+                    currentColor,
+                    calGen.getNextCalendarDay()
                 );
                 if (this.shouldDrawBorderForTile(i, bottomIndex)) {
                     tile.isBottomTile = true;
                 }
                 tiles.push(tile);
                 currentGrid.addTile();
+                calGen.incrementDay();
             }
         }
 

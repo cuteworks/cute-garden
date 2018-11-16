@@ -9,6 +9,8 @@ export class AppConfig {
 
     public momentum_multiplier: number;
 
+    public tile_draw_dayOfMonth: boolean;
+
     constructor() {
         this.debug_showFPS = true;
         this.debug_showCanvasBoundingBox = true;
