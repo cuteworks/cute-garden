@@ -78,6 +78,11 @@ export class Game {
 
         this._cam = new Camera(0, 0, 0, 0);
         this._config = new AppConfig();
+
+        this._mouseRelX = 0;
+        this._mouseRelY = 0;
+        this._mouseDragAnchorX = 0;
+        this._mouseDragAnchorY = 0;
     }
 
     private initElements(): void {
@@ -94,7 +99,7 @@ export class Game {
             this.onMouseMove(evt as MouseEvent);
         });
         this.$canvas.on("touchmove", (evt: Event) => {
-            this.onMouseMove(evt as MouseEvent);
+            this.onTouchMove(evt as TouchEvent);
         });
 
 
@@ -102,14 +107,14 @@ export class Game {
             this.onMouseDown(evt as MouseEvent);
         });
         this.$canvas.on("touchstart", (evt: Event) => {
-            this.onMouseDown(evt as MouseEvent);
+            this.onTouchDown(evt as TouchEvent);
         });
 
         this.$canvas.on("mouseup", (evt: Event) => {
             this.onMouseUp(evt as MouseEvent);
         });
         this.$canvas.on("touchend", (evt: Event) => {
-            this.onMouseUp(evt as MouseEvent);
+            this.onTouchUp(evt as TouchEvent);
         });
 
         this.$canvas.on("mouseleave", (evt: Event) => {
@@ -160,10 +165,82 @@ export class Game {
     }
 
     protected onMouseMove(evt: MouseEvent): void {
+        this.__inputDeviceMove(evt.clientX, evt.clientY);
+    }
+
+    /**
+     * @summary Mouse down handler for initializing a drag.
+     * @param _evt The mouse down event.
+     */
+    protected onMouseDown(_evt: MouseEvent): void {
+        this.__inputDeviceDown();
+    }
+
+    /**
+     * @summary Mouse up handler for releasing a drag or for click events.
+     * @param _evt The mouse up event.
+     */
+    protected onMouseUp(_evt: MouseEvent): void {
+        this.__inputDeviceUp();
+    }
+
+    /**
+     * @summary Mouse leave handler for the canvas - when the mouse leaves, cancel any ongoing drag events.
+     * @param _evt The mouse leave event.
+     */
+    protected onMouseLeave(_evt: MouseEvent): void {
+        //this._mouseIsDrag = false;
+        //this._mouseIsDown = false;
+    }
+
+
+    protected onTouchDown(_evt: TouchEvent): void {
+        //this.__inputDeviceDown();
+        let touch = _evt.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        this.__inputDeviceDown(touch.clientX, touch.clientY);
+    }
+
+    protected onTouchUp(_evt: TouchEvent): void {
+        this.__inputDeviceUp();
+    }
+
+    protected onTouchMove(_evt: TouchEvent): void {
+        let touch = _evt.changedTouches[0];
+        if (!touch) {
+            return;
+        }
+
+        this.__inputDeviceMove(touch.clientX, touch.clientY);
+    }
+
+    //#endregion
+
+    //#region Event handlers - shared logic
+
+    private __inputDeviceDown(anchorX: number = this._mouseRelX, anchorY: number = this._mouseRelY): void {
+        this._mouseIsDown = true;
+        this._mouseDragAnchorX = anchorX;
+        this._mouseDragAnchorY = anchorY;
+
+        this.cam.applyMomentum = false;
+    }
+
+    private __inputDeviceUp(): void {
+        this._mouseIsDown = false;
+        this._mouseIsDrag = false;
+
+        this._cam.applyMomentum = true;
+    }
+
+    private __inputDeviceMove(posX: number, posY: number): void {
         let rect = (this.$canvas.get(0) as HTMLElement).getBoundingClientRect();
 
-        this._mouseRelX = evt.clientX - rect.left;
-        this._mouseRelY = evt.clientY - rect.top;
+        this._mouseRelX = posX - rect.left;
+        this._mouseRelY = posY - rect.top;
 
         if (this._mouseIsDown) {
             this._mouseIsDrag = true;
@@ -182,38 +259,6 @@ export class Game {
             this._mouseDragAnchorX = this._mouseRelX;
             this._mouseDragAnchorY = this._mouseRelY;
         }
-    }
-
-    /**
-     * @summary Mouse down handler for initializing a drag.
-     * @param _evt The mouse down event.
-     */
-    protected onMouseDown(_evt: MouseEvent): void {
-        this._mouseIsDown = true;
-        this._mouseDragAnchorX = this._mouseRelX;
-        this._mouseDragAnchorY = this._mouseRelY;
-
-        this.cam.applyMomentum = false;
-    }
-
-    /**
-     * @summary Mouse up handler for releasing a drag or for click events.
-     * @param _evt The mouse up event.
-     */
-    protected onMouseUp(_evt: MouseEvent): void {
-        this._mouseIsDown = false;
-        this._mouseIsDrag = false;
-
-        this._cam.applyMomentum = true;
-    }
-
-    /**
-     * @summary Mouse leave handler for the canvas - when the mouse leaves, cancel any ongoing drag events.
-     * @param _evt The mouse leave event.
-     */
-    protected onMouseLeave(_evt: MouseEvent): void {
-        //this._mouseIsDrag = false;
-        //this._mouseIsDown = false;
     }
 
     //#endregion

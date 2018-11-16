@@ -1,5 +1,9 @@
 @import "../cutegarden-variables";
 
+html {
+  overscroll-behavior: contain;
+}
+
 #cutegarden-canvas-container {
   height: 100vh;
 }
