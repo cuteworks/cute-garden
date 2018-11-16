@@ -84,7 +84,7 @@ export class HexTile implements IRenderable {
 
 
         if (ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY)) {
-            ctx.fillStyle = this.colorScheme.colorHover;
+            ctx.fillStyle = AppConstants.COLOR_DARK;
             ctx.fill();
         } else {
             // Bottom tiles that are not hovered need to clear their inside to the background color, or else the bottom

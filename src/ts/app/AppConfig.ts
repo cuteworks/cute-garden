@@ -12,7 +12,7 @@ export class AppConfig {
     constructor() {
         this.debug_showFPS = true;
         this.debug_showCanvasBoundingBox = true;
-        this.debug_showCursor = true;
+        this.debug_showCursor = false;
         this.debug_showCameraPosition = true;
 
         this.pan_multiplier = 1.0;

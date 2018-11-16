@@ -7,12 +7,13 @@ export class AppConstants {
     public static FONT_SERIF = "Roboto Slab";
 
     public static COLOR_BLACK = "#141316";
+    public static COLOR_DARKER = "#1e1c20";
+    public static COLOR_DARK = "#28262b";
     public static COLOR_GRAY = "#6d6875";
     public static COLOR_LIGHT = "#afacb3";
-    public  static COLOR_LIGHTER = "#e9e8ea";
     public static COLOR_WHITE = "#e4e3e5";
 
-    public static COLOR_BACKGROUND = AppConstants.COLOR_LIGHTER;
+    public static COLOR_BACKGROUND = AppConstants.COLOR_DARKER;
 
     public static COLOR_CUTE_WINTER = "#118ab2";
     public static COLOR_CUTE_WINTER_BORDER = "#0d6582";
