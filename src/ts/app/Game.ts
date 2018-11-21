@@ -104,6 +104,7 @@ export class Game {
         });
         this.$canvas.on("touchmove", (evt: Event) => {
             this.onTouchMove(evt as TouchEvent);
+            evt.preventDefault(); // Prevent rubberbanding on iOS devices.
         });
 
 
@@ -111,6 +112,11 @@ export class Game {
             this.onMouseDown(evt as MouseEvent);
         });
         this.$canvas.on("touchstart", (evt: Event) => {
+            if ((evt as TouchEvent).touches.length > 1) {
+                // Prevent multi-touch from sending us flying (multi-touch still a little weird)
+                evt.preventDefault();
+                return;
+            }
             this.onTouchDown(evt as TouchEvent);
         });
 
