@@ -29,6 +29,8 @@ export class Game {
     private _mouseDragAnchorX: number;
     private _mouseDragAnchorY: number;
 
+    private _hasReceivedFirstUserInput: boolean;
+
     //#region Getters / setters
 
     public get cw(): number {
@@ -118,6 +120,10 @@ export class Game {
         this.$canvas.on("touchend", (evt: Event) => {
             this.onTouchUp(evt as TouchEvent);
         });
+
+        this.$canvas.on("click", (evt: Event) => {
+           this.__initAfterFirstInput(evt as MouseEvent);
+        });
     }
 
     private __initCanvas(): void {
@@ -139,6 +145,19 @@ export class Game {
         }, this._config.tick_delay);
     }
 
+    /**
+     * @summary    Many APIs are not allowed to be called until the user has interacted with the page (e.g. fullscreen).
+     *             Perform setup for those APIs here.
+     * @param _evt The mouse event representing the first user input.
+     */
+    private __initAfterFirstInput(_evt: MouseEvent): void {
+        if (this._hasReceivedFirstUserInput) {
+            return;
+        }
+
+        this._hasReceivedFirstUserInput = true;
+        Game.__attemptFullscreenCanvas();
+    }
 
     //#endregion
 
@@ -192,6 +211,10 @@ export class Game {
         this.__inputDeviceDown(touch.clientX, touch.clientY);
     }
 
+    /**
+     * @summary Touch up handler for releasing a drag or click events.
+     * @param _evt The touch up event.
+     */
     protected onTouchUp(_evt: TouchEvent): void {
         this.__inputDeviceUp();
     }
@@ -335,6 +358,34 @@ export class Game {
      */
     public loop() {
         this._cam.loop();
+    }
+
+    //#endregion
+
+    //#region DOM Helpers / Page Setup
+
+    private static __attemptFullscreenCanvas() {
+        // Attempt to go full-screen on mobile or small screens.
+        if ($("body").width() > 1024) {
+            return;
+        }
+
+        let fullscreenFn: Function;
+        let $canvas = $("#cutegarden-canvas").get(0) as any;
+
+        if ($canvas.requestFullscreen) {
+            fullscreenFn = $canvas.requestFullscreen;
+        } else if ($canvas.mozRequestFullScreen) {
+            fullscreenFn = $canvas.mozRequestFullScreen;
+        } else if ($canvas.webkitRequestFullScreen) {
+            fullscreenFn = $canvas.webkitRequestFullScreen;
+        } else if ($canvas.msRequestFullscreen) {
+            fullscreenFn = $canvas.msRequestFullscreen;
+        }
+
+        if (fullscreenFn) {
+            fullscreenFn.call($canvas);
+        }
     }
 
     //#endregion

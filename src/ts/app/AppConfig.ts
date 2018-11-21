@@ -12,10 +12,10 @@ export class AppConfig {
     public tile_draw_dayOfMonth: boolean;
 
     constructor() {
-        this.debug_showFPS = true;
-        this.debug_showCanvasBoundingBox = true;
+        this.debug_showFPS = false;
+        this.debug_showCanvasBoundingBox = false;
         this.debug_showCursor = false;
-        this.debug_showCameraPosition = true;
+        this.debug_showCameraPosition = false;
 
         this.pan_multiplier = 1.0;
         this.tick_delay = 33;

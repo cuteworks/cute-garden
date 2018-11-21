@@ -165,8 +165,6 @@ export class Camera implements ILoopable {
         let deltaX = x - camCenterX;
         let deltaY = y - camCenterY;
 
-        console.log("From (" + camCenterX + ", " + camCenterY + "), seeking (" + x + ", " + y + "). Delta needed: (" + deltaX + ", " + deltaY + ")");
-
         // Need to add deltaX and deltaY to the offsets via momentum.
         this._momentumX = deltaX / 11;
         this._momentumY = deltaY / 11;
