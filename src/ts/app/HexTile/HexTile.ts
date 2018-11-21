@@ -109,17 +109,7 @@ export class HexTile implements IRenderable {
             ctx.globalAlpha = 0.5;
         }
 
-        ctx.beginPath();
-
-        ctx.moveTo(this.calcPointX(cam, 1), this.calcPointY(cam, 1));
-        ctx.lineTo(this.calcPointX(cam, 2), this.calcPointY(cam, 2));
-        ctx.lineTo(this.calcPointX(cam, 3), this.calcPointY(cam, 3));
-        ctx.lineTo(this.calcPointX(cam, 4), this.calcPointY(cam, 4));
-        ctx.lineTo(this.calcPointX(cam, 5), this.calcPointY(cam, 5));
-        ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6));
-
-        ctx.closePath();
-
+        this.render_drawTopPath(cam, ctx);
 
         if (ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY) || this.isSelected) {
             ctx.fillStyle = this.isSelected ? AppConstants.COLOR_LIGHT : AppConstants.COLOR_DARK;
@@ -162,6 +152,25 @@ export class HexTile implements IRenderable {
     }
 
     /**
+     * @summary   Draw the path for the top of the hexagon - this is used by both the rendering and the click detection
+     *             by making use of the Canvas's point-in-path function.
+     * @param cam The camera.
+     * @param ctx The rendering context.
+     */
+    private render_drawTopPath(cam: Camera, ctx: CanvasRenderingContext2D): void {
+        ctx.beginPath();
+
+        ctx.moveTo(this.calcPointX(cam, 1), this.calcPointY(cam, 1));
+        ctx.lineTo(this.calcPointX(cam, 2), this.calcPointY(cam, 2));
+        ctx.lineTo(this.calcPointX(cam, 3), this.calcPointY(cam, 3));
+        ctx.lineTo(this.calcPointX(cam, 4), this.calcPointY(cam, 4));
+        ctx.lineTo(this.calcPointX(cam, 5), this.calcPointY(cam, 5));
+        ctx.lineTo(this.calcPointX(cam, 6), this.calcPointY(cam, 6));
+
+        ctx.closePath();
+    }
+
+    /**
      * @summary        Determine if this tile is visible to the camera.
      * @param  cam     The camera.
      * @return boolean True if the tile is visible, false otherwise.
@@ -188,14 +197,23 @@ export class HexTile implements IRenderable {
      *          the visible tile to allow for some flexibility in selecting.
      * @param x The x-coordinate to test for containment.
      * @param y The y-coordinate to test for containment.
+     * @param cam        The camera.
+     * @param ctx        The rendering context.
      */
-    public containsPoint(x: number, y: number) {
+    public containsPoint(x: number, y: number, cam: Camera, ctx: CanvasRenderingContext2D) {
         let boundX = this.posX - AppConstants.TILE_RADIUS;
-        let boundY = this.posY - AppConstants.TILE_RADIUS;
+        let boundY = this.posY - AppConstants.TILE_RADIUS * Math.sin(AppConstants.CAMERA_ANGLE_TO_GROUND);
         let boundXX = this.posX + AppConstants.TILE_RADIUS;
-        let boundYY = this.posY + AppConstants.TILE_RADIUS;
+        let boundYY = this.posY + AppConstants.TILE_RADIUS * Math.sin(AppConstants.CAMERA_ANGLE_TO_GROUND);
 
-        return boundX < x && boundY < y && x < boundXX && y < boundYY;
+        if (!(boundX < x && boundY < y && x < boundXX && y < boundYY)) {
+            // Fast path out, certainly can't contain if outside of bounding box.
+            return false;
+        }
+
+        // Inside bounding box but are we in the hexagonal shape of the top of the tile?
+        this.render_drawTopPath(cam, ctx);
+        return ctx.isPointInPath(cam.mapWorldToScreenX(x), cam.mapWorldToScreenY(y));
     }
 
 

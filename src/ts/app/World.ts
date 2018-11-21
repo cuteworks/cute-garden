@@ -51,12 +51,19 @@ export class World implements IRenderable {
         ctx.textAlign = "left";
     }
 
-    public worldClick(x: number, y: number) {
+    /**
+     * @summary   Click handler for a click event in the world.
+     * @param x   World x-coordinate of the click event.
+     * @param y   World y-coordinate of the click event.
+     * @param cam The camera.
+     * @param ctx The rendering context.
+     */
+    public worldClick(x: number, y: number, cam: Camera, ctx: CanvasRenderingContext2D) {
         let firstTileSelected: HexTile;
 
         // Check if we're selecting a tile..
         for (let tile of this.tiles) {
-            tile.isSelected = tile.containsPoint(x, y);
+            tile.isSelected = tile.containsPoint(x, y, cam, ctx);
             if (!firstTileSelected && tile.isSelected) {
                 firstTileSelected = tile;
             }

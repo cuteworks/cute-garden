@@ -219,7 +219,7 @@ export class Game {
     private __inputDeviceUp(): void {
         if (!this._mouseIsDrag) {
             if (this._world) {
-                this._world.worldClick(this.cam.mapScreenToWorldX(this._mouseRelX), this.cam.mapScreenToWorldY(this._mouseRelY));
+                this._world.worldClick(this.cam.mapScreenToWorldX(this._mouseRelX), this.cam.mapScreenToWorldY(this._mouseRelY), this.cam, this._ctx);
             }
         }
 

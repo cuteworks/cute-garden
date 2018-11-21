@@ -180,4 +180,12 @@ export class Camera implements ILoopable {
     public mapScreenToWorldY(y: number): number {
         return y + this.offsetY;
     }
+
+    public mapWorldToScreenX(x: number): number {
+        return x - this.offsetX;
+    }
+
+    public mapWorldToScreenY(y: number): number {
+        return y - this.offsetY;
+    }
 }

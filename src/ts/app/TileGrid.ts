@@ -1,8 +1,8 @@
 import {AppConstants} from "./AppConstants";
 
 export class TileGrid {
-    public static SPACING_X = 24;
-    public static SPACING_Y = 24;
+    public static SPACING_X = 1;
+    public static SPACING_Y = 1;
 
     private _width: number;
     private _x: number;
