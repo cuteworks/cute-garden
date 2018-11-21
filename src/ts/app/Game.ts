@@ -23,6 +23,7 @@ export class Game {
     private _mouseRelX: number;
     private _mouseRelY: number;
 
+    private _mouseDownTimestamp: number;
     private _mouseIsDown: boolean;
     private _mouseIsDrag: boolean;
     private _mouseDragAnchorX: number;
@@ -212,6 +213,7 @@ export class Game {
         this._mouseIsDown = true;
         this._mouseDragAnchorX = anchorX;
         this._mouseDragAnchorY = anchorY;
+        this._mouseDownTimestamp = +new Date();
 
         this.cam.applyMomentum = false;
     }
@@ -235,7 +237,13 @@ export class Game {
         this._mouseRelX = posX - rect.left;
         this._mouseRelY = posY - rect.top;
 
+        let mouseDownDelta: number;
+
         if (this._mouseIsDown) {
+            mouseDownDelta = +new Date() - this._mouseDownTimestamp;
+        }
+
+        if (this._mouseIsDown && mouseDownDelta > AppConstants.CAMERA_DRAG_DELAY) {
             this._mouseIsDrag = true;
         }
 

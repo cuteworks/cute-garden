@@ -1,6 +1,7 @@
 export class AppConstants {
     public static TILE_RADIUS = 40;
     public static CAMERA_ANGLE_TO_GROUND = 45;
+    public static CAMERA_DRAG_DELAY = 40; // Milliseconds to wait until considering a mouse down event to be a drag event instead of a click.
 
     public static FONT_BRAND = "Pacifico";
     public static FONT_SANS_SERIF = "Yantramanav";
