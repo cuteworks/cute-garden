@@ -2,6 +2,7 @@ export class CalendarDay {
     private _dayOfYear: number;
     private _dayOfMonth: number;
     private _monthName: string;
+    private _seasonName: string;
 
     //#region Getters / setters
 
@@ -27,12 +28,21 @@ export class CalendarDay {
         this._monthName = _;
     }
 
+    get seasonName(): string {
+        return this._seasonName;
+    }
+
+    set seasonName(_: string) {
+        this._seasonName = _;
+    }
+
     //#endregion
 
 
-    constructor(dayOfYear: number, dayOfMonth: number, monthName: string) {
+    constructor(dayOfYear: number, dayOfMonth: number, monthName: string, seasonName: string) {
         this.dayOfYear = dayOfYear;
         this.dayOfMonth = dayOfMonth;
         this.monthName = monthName;
+        this.seasonName = seasonName;
     }
 }

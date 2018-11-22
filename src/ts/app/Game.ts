@@ -379,7 +379,7 @@ export class Game {
         }
 
         let fullscreenFn: Function;
-        let $canvas = $("#cutegarden-canvas").get(0) as any;
+        let $canvas = $("body").get(0) as any;
 
         if ($canvas.requestFullscreen) {
             fullscreenFn = $canvas.requestFullscreen;
