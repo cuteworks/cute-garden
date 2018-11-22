@@ -25,4 +25,18 @@ html {
   right: 5rem;
   bottom: 5rem;
   height: 30vh;
+
+  animation: tile-control-open;
+  animation-duration: 0.1s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes tile-control-open {
+  from {
+    transform: scaleY(0.0);
+  }
+
+  to {
+    transform: scaleY(1.0);
+  }
 }
