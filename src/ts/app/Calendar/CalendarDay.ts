@@ -29,10 +29,10 @@ export class CalendarDay {
 
     //#endregion
 
-    
+
     constructor(dayOfYear: number, dayOfMonth: number, monthName: string) {
         this.dayOfYear = dayOfYear;
-        this._dayOfMonth = dayOfMonth;
+        this.dayOfMonth = dayOfMonth;
         this.monthName = monthName;
     }
 }

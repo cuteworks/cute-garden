@@ -2,7 +2,7 @@ import {CalendarDay} from "./CalendarDay";
 
 export class CalendarGen {
     private readonly _year: number;
-    private _currentDay: number = 0;
+    private _currentDay: number = 1;
 
     //#region Getters / setters
 
@@ -27,7 +27,7 @@ export class CalendarGen {
         let date = new Date(new Date(this.year, 0).setDate(this.currentDay));
 
         let dayOfMonth = date.getDate();
-        let monthName = CalendarGen.__getMonthName(dayOfMonth);
+        let monthName = CalendarGen.__getMonthName(date.getMonth());
 
         return new CalendarDay(this.currentDay, dayOfMonth, monthName);
     }
