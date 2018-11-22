@@ -12,3 +12,17 @@ html {
   position: absolute;
   background-color: $cutegarden-dark;
 }
+
+// Controls are hidden by default and fixed position to not interfere with the full-screen canvas.
+.app-control {
+  display: none;
+  position: fixed;
+  z-index: 1;
+}
+
+.tile-control {
+  left: 5rem;
+  right: 5rem;
+  bottom: 5rem;
+  height: 30vh;
+}

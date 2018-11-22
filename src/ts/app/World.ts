@@ -71,6 +71,9 @@ export class World implements IRenderable {
 
         if (firstTileSelected) {
             this._game.cam.setMomentumTowards(firstTileSelected.posX, firstTileSelected.posY);
+            this._game.selectTile(firstTileSelected);
+        } else {
+            this._game.selectTile(null);
         }
     }
 }

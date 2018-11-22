@@ -3,6 +3,8 @@ import {Camera} from "./Camera";
 import {World} from "./World";
 import {AppConstants} from "./AppConstants";
 import {Renderer} from "./Renderer";
+import {HexTile} from "./HexTile/HexTile";
+import {GameDOM} from "./GameDOM";
 
 export class Game {
     private $canvas: JQuery<HTMLElement>;
@@ -392,6 +394,19 @@ export class Game {
         if (fullscreenFn) {
             fullscreenFn.call($canvas);
         }
+    }
+
+    //#endregion
+
+    //#region Game logic
+
+    public selectTile(tile: HexTile): void {
+        if (!tile) {
+            GameDOM.hideAllTileControls();
+            return;
+        }
+
+        GameDOM.showTileInfo(tile);
     }
 
     //#endregion
