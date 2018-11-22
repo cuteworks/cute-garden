@@ -111,17 +111,12 @@ export class HexTile implements IRenderable {
 
         this.render_drawTopPath(cam, ctx);
 
-        if (ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY) || this.isSelected) {
-            ctx.fillStyle = this.isSelected ? AppConstants.COLOR_LIGHT : AppConstants.COLOR_DARK;
-            ctx.fill();
-        } else {
-            // Bottom tiles that are not hovered need to clear their inside to the background color, or else the bottom
-            // border from other bottom tiles will be visible through the top face of this tile. Do this fill for all
-            // tiles since the stroke-width will look uneven otherwise.
-            ctx.fillStyle = AppConstants.COLOR_BACKGROUND;
-            ctx.fill();
-        }
+        ctx.fillStyle =
+            this.isSelected ? AppConstants.COLOR_LIGHT :
+                ctx.isPointInPath(cam.mouseScreenX, cam.mouseScreenY) ? AppConstants.COLOR_DARK :
+                    AppConstants.COLOR_BACKGROUND;
 
+        ctx.fill();
         ctx.stroke();
 
 
