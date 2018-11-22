@@ -13,6 +13,10 @@ export class Camera implements ILoopable {
     private _momentumX: number;
     private _momentumY: number;
     private _angleToGround: number;
+    private _boundLeft: number;
+    private _boundRight: number;
+    private _boundTop: number;
+    private _boundBottom: number;
 
     get offsetX(): number {
         return this._offsetX;
@@ -110,12 +114,50 @@ export class Camera implements ILoopable {
         this._angleToGround = _;
     }
 
-    constructor(offsetX: number = 0, offsetY: number = 0, width: number = 0, height: number = 0, angleToGround: number = 90) {
+    get boundLeft(): number {
+        return this._boundLeft;
+    }
+
+    set boundLeft(_: number) {
+        this._boundLeft = _;
+    }
+
+    get boundRight(): number {
+        return this._boundRight;
+    }
+
+    set boundRight(_: number) {
+        this._boundRight = _;
+    }
+
+    get boundTop(): number {
+        return this._boundTop;
+    }
+
+    set boundTop(_: number) {
+        this._boundTop = _;
+    }
+
+    get boundBottom(): number {
+        return this._boundBottom;
+    }
+
+    set boundBottom(_: number) {
+        this._boundBottom = _;
+    }
+
+    constructor(offsetX: number = 0, offsetY: number = 0, width: number = 0, height: number = 0,
+                angleToGround: number = 90, boundLeft: number = -2000, boundRight: number = 0,
+                boundTop: number = -2000, boundBottom: number = 0) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.width = width;
         this.height = height;
         this.angleToGround = angleToGround;
+        this.boundLeft = boundLeft;
+        this.boundRight = boundRight;
+        this.boundTop = boundTop;
+        this.boundBottom = boundBottom;
 
         this.mouseWorldX = 0;
         this.mouseWorldY = 0;
@@ -148,6 +190,26 @@ export class Camera implements ILoopable {
 
         this.offsetX += this._momentumX;
         this.offsetY += this._momentumY;
+
+
+        if (this.offsetX < this.boundLeft) {
+            this.offsetX += (this.boundLeft - this.offsetX);
+            this._momentumX *= -1;
+        }
+        if (this.offsetX > this.boundRight) {
+            this.offsetX -= (this.offsetX - this.boundRight);
+            this._momentumX *= -1;
+        }
+
+        if (this.offsetY < this.boundTop) {
+            this.offsetY += (this.boundTop - this.offsetY);
+            this._momentumY *= -1;
+        }
+        if (this.offsetY > this.boundBottom) {
+            this.offsetY -= (this.offsetY - this.boundBottom);
+            this._momentumY *= -1;
+        }
+
 
         this._momentumX /= 1.1;
         this._momentumY /= 1.1;
