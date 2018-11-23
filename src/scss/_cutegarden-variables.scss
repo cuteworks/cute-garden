@@ -3,12 +3,11 @@
  * SCSS files we build with the project. They are read in cutegarden.scss and used there to override the default
  * framework styles.
  * ********************************************************************************************************************/
-
 @import "cuteworks-variables";
 
-//$cutegarden-block-font: 'Bungee', sans-serif;
+$cutegarden-block-font: 'Pacifico', sans-serif;
 $cutegarden-sans-serif-font: 'Yantramanav', sans-serif;
-$cutegarden-serif-font: 'Roboto Slab', serif;
+$cutegarden-serif-font: 'Bubblegum Sans', serif;
 
 $cutegarden-black: #141316;
 $cutegarden-dark: #28262b;
@@ -22,3 +21,19 @@ $cutegarden-secondary: #621708;
 
 $cutegarden-primary-accent: #ffbb1e;
 $cutegarden-secondary-accent: #941b0c;
+
+$cutegarden-color-winter: #118ab2;
+$cutegarden-color-winter-dark: #0d6582;
+$cutegarden-color-winter-light: #bedfea;
+
+$cutegarden-color-spring: #3ed654;
+$cutegarden-color-spring-dark: #33b045;
+$cutegarden-color-spring-light: #caf3d0;
+
+$cutegarden-color-summer: #ffbf66;
+$cutegarden-color-summer-dark: #d19453;
+$cutegarden-color-summer-light: #fff2d6;
+
+$cutegarden-color-fall: #ef476f;
+$cutegarden-color-fall-dark: #c43b5b;
+$cutegarden-color-fall-light: #faccd7;

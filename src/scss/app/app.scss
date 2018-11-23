@@ -26,9 +26,32 @@ html {
   bottom: 5rem;
   height: 30vh;
 
+  padding: 0;
+
   animation: tile-control-open;
   animation-duration: 0.1s;
   animation-timing-function: ease-in-out;
+
+  .tile-control_header {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+
+    padding-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 0.5rem;
+
+    .title, .subtitle {
+      color: $cutegarden-white;
+    }
+  }
+
+  .tile-control_body {
+    padding: 1rem;
+    height: 50%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
 }
 
 @keyframes tile-control-open {
@@ -39,4 +62,41 @@ html {
   to {
     transform: scaleY(1.0);
   }
+}
+
+// Different background header colors for each season.
+.tile-control[data-season="Winter"] {
+  background-color: $cutegarden-color-winter-light;
+
+  .tile-control_header {
+    background-color: $cutegarden-color-winter-dark;
+  }
+}
+
+.tile-control[data-season="Spring"] {
+  background-color: $cutegarden-color-spring-light;
+
+  .tile-control_header {
+    background-color: $cutegarden-color-spring-dark;
+  }
+}
+
+.tile-control[data-season="Summer"] {
+  background-color: $cutegarden-color-summer-light;
+
+  .tile-control_header {
+    background-color: $cutegarden-color-summer-dark;
+  }
+}
+
+.tile-control[data-season="Fall"] {
+  background-color: $cutegarden-color-fall-light;
+
+  .tile-control_header {
+    background-color: $cutegarden-color-fall-dark;
+  }
+}
+
+.tile-control-tile-view_tile-text {
+  font-size: 1.3rem;
 }
