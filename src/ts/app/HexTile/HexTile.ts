@@ -105,7 +105,7 @@ export class HexTile implements IRenderable {
         ctx.lineJoin = "round";
         ctx.strokeStyle = this.colorScheme.color;
 
-        if (!this._isInFuture) {
+        if (this._isInFuture) {
             ctx.globalAlpha = 0.5;
         }
 

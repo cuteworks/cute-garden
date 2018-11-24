@@ -59,7 +59,7 @@ export class WorldGen {
         ];
 
         let tiles: HexTile[] = [];
-
+        let curDate = new Date();
 
         for (let seasonIdx = 0; seasonIdx < daysInSeasons.length; seasonIdx++) {
             let bottomIndex: number = this.calculateBottomTileBeginIndex(daysInSeasons[seasonIdx]);
@@ -89,6 +89,11 @@ export class WorldGen {
                 tiles.push(tile);
                 currentGrid.addTile();
                 calGen.incrementDay();
+
+                let tileDate = new Date(new Date(year, 0).setDate(tile.calendarDay.dayOfYear));
+                if (tileDate > curDate) {
+                    tile.isInFuture = true;
+                }
             }
         }
 

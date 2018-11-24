@@ -406,7 +406,11 @@ export class Game {
             return;
         }
 
-        GameDOM.showTileInfo(tile);
+        if (tile.isInFuture) {
+            GameDOM.showTileWriteBasic(tile);
+        } else {
+            GameDOM.showTileInfo(tile);
+        }
     }
 
     //#endregion
